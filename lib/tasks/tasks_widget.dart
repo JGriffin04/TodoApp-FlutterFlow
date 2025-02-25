@@ -1,4 +1,5 @@
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
 import '/backend/backend.dart';
 import '/components/add_task_widget.dart';
 import '/components/task_widget.dart';
@@ -104,6 +105,59 @@ class _TasksWidgetState extends State<TasksWidget> {
                           fontFamily: 'Inter',
                           letterSpacing: 0.0,
                         ),
+                  ),
+                ),
+                Align(
+                  alignment: AlignmentDirectional(0.0, 0.0),
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: FutureBuilder<ApiCallResponse>(
+                      future: GetRandomQuoteCall.call(),
+                      builder: (context, snapshot) {
+                        // Customize what your widget looks like when it's loading.
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: SizedBox(
+                              width: 50.0,
+                              height: 50.0,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  FlutterFlowTheme.of(context).primary,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        final textGetRandomQuoteResponse = snapshot.data!;
+
+                        return InkWell(
+                          splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () async {
+                            _model.apiResult6al =
+                                await GetRandomQuoteCall.call();
+
+                            safeSetState(() {});
+                          },
+                          child: Text(
+                            valueOrDefault<String>(
+                              getJsonField(
+                                textGetRandomQuoteResponse.jsonBody,
+                                r'''$[:].q''',
+                              )?.toString(),
+                              'Quote',
+                            ),
+                            style:
+                                FlutterFlowTheme.of(context).bodySmall.override(
+                                      fontFamily: 'Inter',
+                                      letterSpacing: 0.0,
+                                    ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Expanded(
